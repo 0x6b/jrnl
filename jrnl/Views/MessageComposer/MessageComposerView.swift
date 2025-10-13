@@ -114,7 +114,7 @@ struct MessageComposerView: View {
     }
 
     private var textInputView: some View {
-        ZStack(alignment: .topLeading) {
+        ZStack(alignment: .bottomTrailing) {
             HighlightedTextEditor(text: $messageText, highlightRules: markdownRules)
                 .introspect { internals in
                     // Set font immediately to ensure correct cursor size
@@ -130,14 +130,13 @@ struct MessageComposerView: View {
                 .focused($isTextFieldFocused)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            // Placeholder text
-            if messageText.isEmpty {
-                Text(placeholderText)
-                    .font(.custom("iA Writer Duo S", size: 14))
-                    .foregroundColor(.secondary.opacity(0.5))
-                    .allowsHitTesting(false)
-                    .padding(.leading, 5)
-            }
+            // Channel indicator - always visible in bottom-right
+            Text(placeholderText)
+                .font(.custom("iA Writer Duo S", size: 14))
+                .foregroundColor(.secondary.opacity(0.5))
+                .allowsHitTesting(false)
+                .padding(.trailing, 5)
+                .padding(.bottom, 5)
         }
         .padding(12)
         .hideScrollIndicators()
@@ -145,7 +144,7 @@ struct MessageComposerView: View {
 
     private var placeholderText: String {
         if let channelName = discordService.webhooks.first(where: { $0.id == selectedWebhookId })?.channelName {
-            return "Message #\(channelName)"
+            return "#\(channelName)"
         } else {
             return "Select a channel to start messaging"
         }
