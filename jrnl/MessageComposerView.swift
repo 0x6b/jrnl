@@ -256,6 +256,9 @@ struct MessageComposerView: View {
         ZStack(alignment: .topLeading) {
             HighlightedTextEditor(text: $messageText, highlightRules: markdownRules)
                 .introspect { internals in
+                    // Set font immediately to ensure correct cursor size
+                    internals.textView.font = customFont
+
                     // Disable automatic link detection to preserve markdown
                     internals.textView.isAutomaticLinkDetectionEnabled = false
                     internals.textView.isAutomaticTextReplacementEnabled = false
