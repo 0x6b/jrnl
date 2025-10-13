@@ -76,6 +76,11 @@ struct SettingsView: View {
             .background(Color(nsColor: .controlBackgroundColor))
         }
         .frame(width: 600, height: 500)
+        .navigationTitle("")
+        .onKeyPress(.escape) {
+            dismiss()
+            return .handled
+        }
         .sheet(isPresented: $showingAddSheet) {
             WebhookEditSheet(discordService: discordService, webhook: nil, isPresented: $showingAddSheet)
         }
