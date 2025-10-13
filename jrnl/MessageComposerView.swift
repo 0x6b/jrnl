@@ -206,33 +206,6 @@ struct MessageComposerView: View {
             .keyboardShortcut("k", modifiers: [.command])
             .hidden()
         }
-        .toolbar {
-            ToolbarSpacer(.flexible)
-            ToolbarItem(placement: .automatic) {
-                Button(action: {
-                    showChannelMenu.toggle()
-                }) {
-                    HStack(spacing: 4) {
-                        Text(discordService.webhooks.first(where: { $0.id == selectedWebhookId })?.channelName ?? "Select Channel")
-                        Image(systemName: "chevron.down")
-                            .font(.system(size: 10))
-                    }
-                }
-                .help("Select channel (⌘K)")
-            }
-
-            ToolbarItem(placement: .primaryAction) {
-                Button(action: {
-                    Task {
-                        await sendMessage()
-                    }
-                }) {
-                    Label("Send", systemImage: "paperplane.fill")
-                }
-                .help("Send message (⌘↩)")
-                .disabled(isSending || messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-            }
-        }
         .onAppear {
             isTextFieldFocused = true
             if selectedWebhookId == nil {
