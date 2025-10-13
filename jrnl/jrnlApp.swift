@@ -57,7 +57,7 @@ struct jrnlApp: App {
                 }
         }
         .windowResizability(.contentMinSize)
-        .windowToolbarStyle(.unified(showsTitle: false))
+        .windowStyle(.hiddenTitleBar)
         .commandsRemoved()
 
         Settings {
