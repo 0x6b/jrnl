@@ -254,19 +254,38 @@ struct MessageComposerView: View {
     }
     
     private var textInputView: some View {
-        HighlightedTextEditor(text: $messageText, highlightRules: markdownRules)
-            .introspect { internals in
-                // Disable automatic link detection to preserve markdown
-                internals.textView.isAutomaticLinkDetectionEnabled = false
-                internals.textView.isAutomaticTextReplacementEnabled = false
+        ZStack(alignment: .topLeading) {
+            HighlightedTextEditor(text: $messageText, highlightRules: markdownRules)
+                .introspect { internals in
+                    // Disable automatic link detection to preserve markdown
+                    internals.textView.isAutomaticLinkDetectionEnabled = false
+                    internals.textView.isAutomaticTextReplacementEnabled = false
 
-                // Set up plain text paste behavior
-                setupPlainTextPaste(for: internals.textView)
+                    // Set up plain text paste behavior
+                    setupPlainTextPaste(for: internals.textView)
+                }
+                .focused($isTextFieldFocused)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            // Placeholder text
+            if messageText.isEmpty {
+                Text(placeholderText)
+                    .font(.custom("iA Writer Duo S", size: 14))
+                    .foregroundColor(.secondary.opacity(0.5))
+                    .allowsHitTesting(false)
+                    .padding(.leading, 5)
             }
-            .focused($isTextFieldFocused)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(12)
-            .hideScrollIndicators()
+        }
+        .padding(12)
+        .hideScrollIndicators()
+    }
+
+    private var placeholderText: String {
+        if let channelName = discordService.webhooks.first(where: { $0.id == selectedWebhookId })?.channelName {
+            return "Message #\(channelName)"
+        } else {
+            return "Select a channel to start messaging"
+        }
     }
 
     private func setupPlainTextPaste(for textView: NSTextView) {
