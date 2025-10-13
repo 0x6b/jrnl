@@ -238,6 +238,10 @@ struct MessageComposerView: View {
             if selectedWebhookId == nil {
                 selectedWebhookId = discordService.webhooks.first?.id
             }
+            updateWindowTitle()
+        }
+        .onChange(of: selectedWebhookId) {
+            updateWindowTitle()
         }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
             isTextFieldFocused = true
@@ -428,6 +432,14 @@ struct MessageComposerView: View {
             selectedWebhookId = options[nextIndex]
         } else {
             selectedWebhookId = options.first ?? nil
+        }
+    }
+
+    private func updateWindowTitle() {
+        if let channelName = discordService.webhooks.first(where: { $0.id == selectedWebhookId })?.channelName {
+            NSApp.keyWindow?.title = "jrnl - #\(channelName)"
+        } else {
+            NSApp.keyWindow?.title = "jrnl"
         }
     }
 }
