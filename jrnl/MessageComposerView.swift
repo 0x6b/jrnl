@@ -16,18 +16,42 @@ private var pasteMonitorKey: UInt8 = 0
 
 // Custom modifier to hide scrollbars in NSScrollView
 struct HideScrollIndicators: ViewModifier {
+    @State private var timer: Timer?
+
     func body(content: Content) -> some View {
         content
             .onAppear {
-                DispatchQueue.main.async {
-                    hideScrollbars()
-                }
+                // Run multiple times to catch dynamically created scroll views
+                hideScrollbarsWithRetry()
+            }
+            .onDisappear {
+                timer?.invalidate()
             }
     }
 
+    private func hideScrollbarsWithRetry() {
+        // Immediate execution
+        hideScrollbars()
+
+        // Retry after short delays to catch delayed scroll view creation
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            hideScrollbars()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            hideScrollbars()
+        }
+
+        // Set up periodic check
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            hideScrollbars()
+        }
+    }
+
     private func hideScrollbars() {
-        guard let window = NSApplication.shared.keyWindow else { return }
-        hideScrollbars(in: window.contentView)
+        // Try all windows, not just key window
+        for window in NSApplication.shared.windows {
+            hideScrollbars(in: window.contentView)
+        }
     }
 
     private func hideScrollbars(in view: NSView?) {
@@ -37,6 +61,8 @@ struct HideScrollIndicators: ViewModifier {
             scrollView.hasVerticalScroller = false
             scrollView.hasHorizontalScroller = false
             scrollView.scrollerStyle = .overlay
+            scrollView.verticalScroller?.alphaValue = 0
+            scrollView.horizontalScroller?.alphaValue = 0
         }
 
         for subview in view.subviews {

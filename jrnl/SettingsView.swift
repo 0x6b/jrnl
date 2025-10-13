@@ -57,6 +57,7 @@ struct SettingsView: View {
                                 discordService.deleteWebhook(at: offsets)
                             }
                         }
+                        .scrollContentBackground(.hidden)
                     }
 
                     Button("Add Webhook") {
