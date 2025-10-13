@@ -25,26 +25,31 @@ struct jrnlApp: App {
             "iAWriterDuoS-BoldItalic.ttf"
         ]
 
+        var registeredCount = 0
+        var failedFonts: [String] = []
+
         for fontName in fontNames {
-            if let fontURL = Bundle.main.url(forResource: fontName.replacingOccurrences(of: ".ttf", with: ""), withExtension: "ttf") {
+            // Try to find font in Fonts subdirectory first
+            var fontURL = Bundle.main.url(forResource: fontName.replacingOccurrences(of: ".ttf", with: ""), withExtension: "ttf", subdirectory: "Fonts")
+
+            // Fallback to root if not found
+            if fontURL == nil {
+                fontURL = Bundle.main.url(forResource: fontName.replacingOccurrences(of: ".ttf", with: ""), withExtension: "ttf")
+            }
+
+            if let fontURL = fontURL {
                 var error: Unmanaged<CFError>?
                 let success = CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, &error)
-                if !success {
-                    print("Failed to register \(fontName): \(error?.takeRetainedValue() ?? "unknown error" as! CFError)")
+                if success {
+                    registeredCount += 1
                 } else {
-                    print("Successfully registered \(fontName)")
+                    failedFonts.append(fontName)
                 }
             } else {
-                print("Could not find \(fontName)")
+                failedFonts.append(fontName)
             }
         }
 
-        // List all available fonts
-        print("\nAvailable fonts containing 'Writer':")
-        let families = NSFontManager.shared.availableFontFamilies
-        for family in families where family.contains("Writer") {
-            print("  - \(family)")
-        }
     }
 
     var body: some Scene {
@@ -57,7 +62,7 @@ struct jrnlApp: App {
                 }
         }
         .windowResizability(.contentMinSize)
-        .windowToolbarStyle(.unified(showsTitle: false))
+        .windowStyle(.hiddenTitleBar)
         .commandsRemoved()
 
         Settings {

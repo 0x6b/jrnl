@@ -9,10 +9,8 @@ import Foundation
 import Combine
 import SwiftUI
 
-struct WebhookConfig: Codable, Identifiable {
-    var id = UUID()
-    var channelName: String
-    var webhookURL: String
+struct DiscordMessage: Codable {
+    let content: String
 }
 
 @MainActor
@@ -60,7 +58,7 @@ class DiscordService: ObservableObject {
         updatedWebhooks.remove(atOffsets: offsets)
         saveWebhooks(updatedWebhooks)
     }
-    
+
     func sendMessage(_ content: String, toWebhookId webhookId: UUID? = nil) async throws {
         guard !webhooks.isEmpty else {
             throw DiscordError.noWebhookURL
@@ -122,44 +120,6 @@ class DiscordService: ObservableObject {
 
         guard 200...299 ~= httpResponse.statusCode else {
             throw DiscordError.httpError(httpResponse.statusCode)
-        }
-    }
-}
-
-struct DiscordMessage: Codable {
-    let content: String
-}
-
-enum DiscordError: LocalizedError {
-    case noWebhookURL
-    case invalidWebhookURL
-    case encodingFailed
-    case invalidResponse
-    case httpError(Int)
-    case webhookNotFound
-    case allWebhooksFailed([(String, Error)])
-    case someWebhooksFailed([(String, Error)])
-
-    var errorDescription: String? {
-        switch self {
-        case .noWebhookURL:
-            return "No Discord webhooks configured"
-        case .invalidWebhookURL:
-            return "Invalid Discord webhook URL"
-        case .encodingFailed:
-            return "Failed to encode message"
-        case .invalidResponse:
-            return "Invalid response from Discord"
-        case .httpError(let code):
-            return "HTTP error: \(code)"
-        case .webhookNotFound:
-            return "Selected webhook not found"
-        case .allWebhooksFailed(let errors):
-            let errorList = errors.map { "\($0.0): \($0.1.localizedDescription)" }.joined(separator: "\n")
-            return "All webhooks failed:\n\(errorList)"
-        case .someWebhooksFailed(let errors):
-            let errorList = errors.map { "\($0.0): \($0.1.localizedDescription)" }.joined(separator: "\n")
-            return "Some webhooks failed:\n\(errorList)"
         }
     }
 }
