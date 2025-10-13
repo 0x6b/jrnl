@@ -15,18 +15,6 @@ struct SettingsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Title bar
-            HStack {
-                Text("Settings")
-                    .font(.headline)
-                Spacer()
-            }
-            .padding()
-            .background(Color(nsColor: .controlBackgroundColor))
-
-            Divider()
-
-            // Content
             Form {
                 Section {
                     if discordService.webhooks.isEmpty {
@@ -88,6 +76,11 @@ struct SettingsView: View {
             .background(Color(nsColor: .controlBackgroundColor))
         }
         .frame(width: 600, height: 500)
+        .navigationTitle("")
+        .onKeyPress(.escape) {
+            dismiss()
+            return .handled
+        }
         .sheet(isPresented: $showingAddSheet) {
             WebhookEditSheet(discordService: discordService, webhook: nil, isPresented: $showingAddSheet)
         }
