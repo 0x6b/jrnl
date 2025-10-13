@@ -48,3 +48,7 @@ Run the app directly from the build directory or copy it to `/Applications` for 
 ## License
 
 MIT. See [LICENSE](./LICENSE) for details.
+
+### Font Licensing
+
+The iA Writer Duo fonts located in `jrnl/Fonts/` are licensed under the [iA-Fonts/iA Writer Duo/LICENSE.md](https://github.com/iaolo/iA-Fonts/blob/f32c04c3058a75d7ce28919ce70fe8800817491b/iA%20Writer%20Duo/LICENSE.md) by Information Architects Inc. These fonts are subject to their own license terms separate from the MIT license covering the rest of this project.
