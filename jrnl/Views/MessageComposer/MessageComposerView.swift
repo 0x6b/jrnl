@@ -20,7 +20,7 @@ struct MessageComposerView: View {
     @FocusState private var isTextFieldFocused: Bool
     @State private var showChannelMenu = false
 
-    private let customFont = NSFont(name: "iA Writer Duo S", size: 14) ?? .monospacedSystemFont(ofSize: 14, weight: .regular)
+    private let customFont = NSFont(name: "iAWriterDuoS-Regular", size: 14) ?? .monospacedSystemFont(ofSize: 14, weight: .regular)
 
     private var markdownRules: [HighlightRule] {
         MarkdownHighlighting.rules(for: customFont)
@@ -118,7 +118,7 @@ struct MessageComposerView: View {
             HighlightedTextEditor(text: $messageText, highlightRules: markdownRules)
                 .introspect { internals in
                     // Set font immediately to ensure correct cursor size
-                    internals.textView.font = customFont
+                    // internals.textView.font = customFont
 
                     // Disable automatic link detection to preserve markdown
                     internals.textView.isAutomaticLinkDetectionEnabled = false
