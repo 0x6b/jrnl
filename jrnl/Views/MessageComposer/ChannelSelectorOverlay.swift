@@ -21,7 +21,8 @@ struct ChannelSelectorOverlay: View {
                     showChannelMenu = false
                 }
 
-            VStack(spacing: 0) {
+            GlassEffectContainer {
+                VStack(spacing: 0) {
                 ForEach(Array(discordService.webhooks.enumerated()), id: \.element.id) { index, webhook in
                     Button(action: {
                         selectedWebhookId = webhook.id
@@ -43,22 +44,27 @@ struct ChannelSelectorOverlay: View {
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    .background(
-                        index == highlightedChannelIndex ?
-                            Color.accentColor.opacity(0.4) :
-                            (webhook.id == selectedWebhookId ? Color.accentColor.opacity(0.2) : Color.clear)
-                    )
+                    .background {
+                        if index == highlightedChannelIndex {
+                            Rectangle()
+                                .fill(.tint.opacity(0.3))
+                                .backgroundStyle(.selection)
+                        } else if webhook.id == selectedWebhookId {
+                            Rectangle()
+                                .fill(.tint.opacity(0.15))
+                                .backgroundStyle(.selection)
+                        }
+                    }
                     .help(index < 9 ? "Press \(index + 1) to select" : "")
 
                     if index < discordService.webhooks.count - 1 {
                         Divider()
                     }
                 }
+                }
+                .frame(width: 300)
+                .glassEffect(.regular, in: .rect(cornerRadius: 12))
             }
-            .background(Color(NSColor.controlBackgroundColor))
-            .cornerRadius(8)
-            .shadow(radius: 10)
-            .frame(width: 300)
             .onAppear {
                 // Set initial highlighted index to current selection
                 if let currentIndex = self.discordService.webhooks.firstIndex(where: { $0.id == self.selectedWebhookId }) {
