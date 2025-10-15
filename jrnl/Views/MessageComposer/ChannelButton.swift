@@ -25,6 +25,7 @@ struct ChannelButton: View {
             .glassEffect(.clear, in: .rect(cornerRadius: 12))
         }
         .buttonStyle(.plain)
+        .focusable(false)
         .help("Click to select channel (⌘K)")
     }
 
