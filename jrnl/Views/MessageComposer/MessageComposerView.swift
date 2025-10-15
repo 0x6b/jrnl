@@ -130,13 +130,13 @@ struct MessageComposerView: View {
                 .focused($isTextFieldFocused)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            // Channel indicator - always visible in bottom-right
-            Text(placeholderText)
-                .font(.custom("iA Writer Duo S", size: 14))
-                .foregroundColor(.secondary.opacity(0.5))
-                .allowsHitTesting(false)
-                .padding(.trailing, 5)
-                .padding(.bottom, 5)
+            // Channel button with liquid glass effect - always visible in bottom-right
+            ChannelButton(
+                channelName: discordService.webhooks.first(where: { $0.id == selectedWebhookId })?.channelName,
+                action: { showChannelMenu.toggle() }
+            )
+            .padding(.trailing, 8)
+            .padding(.bottom, 8)
         }
         .padding(12)
         .hideScrollIndicators()
