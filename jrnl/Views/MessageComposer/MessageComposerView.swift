@@ -18,7 +18,6 @@ struct MessageComposerView: View {
     @State private var alertMessage = ""
     @State private var selectedWebhookId: UUID? = nil
     @FocusState private var isTextFieldFocused: Bool
-    @State private var showChannelMenu = false
 
     private let customFont = NSFont(name: "iAWriterDuoS-Regular", size: 14) ?? .monospacedSystemFont(ofSize: 14, weight: .regular)
 
@@ -37,20 +36,9 @@ struct MessageComposerView: View {
                     Group {
                         if isSending {
                             ZStack {
-                                Color.black.opacity(0.3)
+                                Color.black.opacity(0.1)
                                 ProgressView()
                             }
-                        }
-                    }
-                )
-                .overlay(
-                    Group {
-                        if showChannelMenu {
-                            ChannelSelectorOverlay(
-                                showChannelMenu: $showChannelMenu,
-                                selectedWebhookId: $selectedWebhookId,
-                                onDismiss: { isTextFieldFocused = true }
-                            )
                         }
                     }
                 )
@@ -82,15 +70,6 @@ struct MessageComposerView: View {
                 EmptyView()
             }
             .keyboardShortcut(.downArrow, modifiers: [.command, .control])
-            .hidden()
-
-            // Show channel menu
-            Button(action: {
-                showChannelMenu.toggle()
-            }) {
-                EmptyView()
-            }
-            .keyboardShortcut("k", modifiers: [.command])
             .hidden()
         }
         .onAppear {
@@ -130,10 +109,9 @@ struct MessageComposerView: View {
                 .focused($isTextFieldFocused)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            // Channel button with liquid glass effect - always visible in bottom-right
             ChannelButton(
-                channelName: discordService.webhooks.first(where: { $0.id == selectedWebhookId })?.channelName,
-                action: { showChannelMenu.toggle() }
+                webhooks: discordService.webhooks,
+                selectedWebhookId: $selectedWebhookId
             )
             .padding(.trailing, 8)
             .padding(.bottom, 8)
