@@ -96,9 +96,6 @@ struct MessageComposerView: View {
         ZStack(alignment: .bottomTrailing) {
             HighlightedTextEditor(text: $messageText, highlightRules: markdownRules)
                 .introspect { internals in
-                    // Set font immediately to ensure correct cursor size
-                    // internals.textView.font = customFont
-
                     // Disable automatic link detection to preserve markdown
                     internals.textView.isAutomaticLinkDetectionEnabled = false
                     internals.textView.isAutomaticTextReplacementEnabled = false
@@ -120,13 +117,7 @@ struct MessageComposerView: View {
         .hideScrollIndicators()
     }
 
-    private var placeholderText: String {
-        if let channelName = discordService.webhooks.first(where: { $0.id == selectedWebhookId })?.channelName {
-            return "#\(channelName)"
-        } else {
-            return "Select a channel to start messaging"
-        }
-    }
+
 
     private func sendMessage() async {
         let trimmedMessage = messageText.trimmingCharacters(in: .whitespacesAndNewlines)
