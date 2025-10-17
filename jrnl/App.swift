@@ -54,6 +54,14 @@ struct jrnlApp: App {
         .windowResizability(.contentMinSize)
         .windowStyle(.hiddenTitleBar)
         .commandsRemoved()
+        .commands {
+            CommandGroup(after: .appInfo) {
+                Button("Enter Full Screen") {
+                    NSApp.keyWindow?.toggleFullScreen(nil)
+                }
+                .keyboardShortcut("f", modifiers: [.control, .command])
+            }
+        }
 
         Settings {
             SettingsView(discordService: discordService)
