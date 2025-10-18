@@ -25,9 +25,6 @@ struct jrnlApp: App {
             "iAWriterDuoS-BoldItalic.ttf"
         ]
 
-        var registeredCount = 0
-        var failedFonts: [String] = []
-
         for fontName in fontNames {
             // Try to find font in Fonts subdirectory first
             var fontURL = Bundle.main.url(forResource: fontName.replacingOccurrences(of: ".ttf", with: ""), withExtension: "ttf", subdirectory: "Fonts")
@@ -39,14 +36,7 @@ struct jrnlApp: App {
 
             if let fontURL = fontURL {
                 var error: Unmanaged<CFError>?
-                let success = CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, &error)
-                if success {
-                    registeredCount += 1
-                } else {
-                    failedFonts.append(fontName)
-                }
-            } else {
-                failedFonts.append(fontName)
+                CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, &error)
             }
         }
 
@@ -64,6 +54,14 @@ struct jrnlApp: App {
         .windowResizability(.contentMinSize)
         .windowStyle(.hiddenTitleBar)
         .commandsRemoved()
+        .commands {
+            CommandGroup(after: .appInfo) {
+                Button("Enter Full Screen") {
+                    NSApp.keyWindow?.toggleFullScreen(nil)
+                }
+                .keyboardShortcut("f", modifiers: [.control, .command])
+            }
+        }
 
         Settings {
             SettingsView(discordService: discordService)
